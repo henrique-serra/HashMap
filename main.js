@@ -6,3 +6,10 @@ import HashMap from "./HashMap.js";
 // }
 
 let map = new HashMap();
+
+// console.log(map.capacity);
+// console.log(map.buckets);
+// console.log(map.hash('chave'));
+console.log(map.set('chave', 'valor'));
+console.log(map.set('chave2', 'valor2'));
+console.log(map.buckets);
