@@ -1,11 +1,8 @@
 import HashMap from "./HashMap.js";
-
-// Use the following snippet whenever you access a bucket through an index. We want to throw an error if we try to access an out-of-bounds index:
-// if (index < 0 || index >= buckets.length) {
-//   throw new Error("Trying to access index out of bounds");
-// }
+import HashSet from "./HashSet.js";
 
 const test = new HashMap();
+const hashSet = new HashSet();
 
 test.set('apple', 'red');
 test.set('banana', 'yellow');
@@ -19,3 +16,16 @@ test.set('ice cream', 'white');
 test.set('jacket', 'blue');
 test.set('kite', 'pink');
 test.set('lion', 'golden');
+
+hashSet.set('apple');
+hashSet.set('banana');
+hashSet.set('carrot');
+hashSet.set('dog');
+hashSet.set('elephant');
+hashSet.set('frog');
+hashSet.set('grape');
+hashSet.set('hat');
+hashSet.set('ice cream');
+hashSet.set('jacket');
+hashSet.set('kite');
+console.log(hashSet.set('lion'));
