@@ -50,8 +50,9 @@ export default class HashMap {
     let bucket = this.buckets[this.hash(key)];
 
     for (const entry of bucket) {
-      if(entry.key === key) {
-        entry.value = value;
+      const entryKey = Object.keys(entry)[0];
+      if(entryKey === key) {
+        entry[key] = value;
         return;
       }
     }
@@ -66,7 +67,7 @@ export default class HashMap {
       bucket = this.buckets[this.hash(key)];
     }
 
-    bucket.push({ key, value });
+    bucket.push({ [key]: value });
     return this.buckets;
   }
 
@@ -74,7 +75,7 @@ export default class HashMap {
     let bucket = this.buckets[this.hash(key)];
 
     for (const entry of bucket) {
-      if(entry.key === key) return entry.value;
+      if(Object.keys(entry)[0] === key) return entry[key];
     }
 
     return false;
@@ -84,31 +85,32 @@ export default class HashMap {
     let bucket = this.buckets[this.hash(key)];
 
     for (const entry of bucket) {
-      if(entry.key === key) return true;
+      if(Object.keys(entry)[0] === key) return true;
     }
 
     return false;
   }
 
   remove(key) {
-    let bucket = this.buckets[this.hash(key)];
+  let bucket = this.buckets[this.hash(key)];
 
-    bucket.forEach((entry, index) => {
-      if(entry.key === key) {
-        bucket.splice(index, 1);
-        // IF, after removal, the length of buckets is equal to prior max capacity, reduce capacity and repopulate buckets
-        let length = this.length();
-        let priorMaxCapacity = Math.floor(HashMap.primeCapacities[this.primeCapacity - 1] * this.loadFactor);
-        if(length === priorMaxCapacity) {
-          this.reduceCapacity();
-          this.populateBuckets();
-        }
-        return true;
+  for (let i = 0; i < bucket.length; i++) {
+    if (Object.keys(bucket[i])[0] === key) {
+      bucket.splice(i, 1);
+
+      let length = this.length();
+      let priorMaxCapacity = Math.floor(HashMap.primeCapacities[this.primeCapacity - 1] * this.loadFactor);
+      if (length === priorMaxCapacity) {
+        this.reduceCapacity();
+        this.populateBuckets();
       }
-    });
 
-    return false;
+      return true;
+    }
   }
+
+  return false;
+}
 
   length() {
     return this.buckets.reduce((length, currentBucket) => length + currentBucket.length, 0);
@@ -120,14 +122,14 @@ export default class HashMap {
   }
 
   keys() {
-    return this.buckets.flatMap(bucket => bucket.map(entry => entry.key));
+    return this.buckets.flatMap(bucket => bucket.map(entry => Object.keys(entry)[0]));
   }
 
   values() {
-    return this.buckets.flatMap(bucket => bucket.map(entry => entry.value));
+    return this.buckets.flatMap(bucket => bucket.map(entry => Object.values(entry)[0]));
   }
 
   entries() {
-    return this.buckets.flatMap(bucket => bucket.map(entry => [entry.key, entry.value]));
+    return this.buckets.flatMap(bucket => bucket.flatMap(entry => Object.entries(entry)));
   }
 }
