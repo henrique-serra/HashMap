@@ -5,11 +5,18 @@ import HashMap from "./HashMap.js";
 //   throw new Error("Trying to access index out of bounds");
 // }
 
-let map = new HashMap();
+const test = new HashMap();
 
-// console.log(map.capacity);
-// console.log(map.buckets);
-// console.log(map.hash('chave'));
-console.log(map.set('chave', 'valor'));
-console.log(map.set('chave2', 'valor2'));
-console.log(map.buckets);
+test.set('apple', 'red');
+test.set('banana', 'yellow');
+test.set('carrot', 'orange');
+test.set('dog', 'brown');
+test.set('elephant', 'gray');
+test.set('frog', 'green');
+test.set('grape', 'purple');
+test.set('hat', 'black');
+test.set('ice cream', 'white');
+test.set('jacket', 'blue');
+test.set('kite', 'pink');
+test.set('lion', 'golden');
+test.set('parrot', 'blue');

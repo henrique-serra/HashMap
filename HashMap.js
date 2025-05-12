@@ -21,12 +21,29 @@ export default class HashMap {
   }
 
   increaseCapacity() {
+    // IF primeCapacity isn't the last primeCapacities already, make primeCapacity equals to the next prime number in primeCapacities
     if((this.primeCapacity + 1) < HashMap.primeCapacities.length) this.primeCapacity += 1;
     this.capacity = HashMap.primeCapacities[this.primeCapacity];
-    
-    // IMPLEMENT CODE FOR POPULATING THE BUCKETS AGAIN WHEN THE CAPACITY INCREASES
 
     return this.capacity;
+  }
+
+  reduceCapacity() {
+    this.primeCapacity -= 1;
+    this.capacity = HashMap.primeCapacities[this.primeCapacity];
+    return this.capacity;
+  }
+
+  populateBuckets() {
+    let entries = this.entries();
+    this.buckets = Array(this.capacity).fill(null).map(() => []);
+
+    entries.forEach((entry) => {
+      const [key, value] = entry;
+      this.set(key, value);
+    });
+
+    return this.buckets;
   }
 
   set(key, value) {
@@ -39,9 +56,78 @@ export default class HashMap {
       }
     }
 
-    // IF the added entry exceeds capacity, increase capacity before adding it. IMPLEMENT CODE...depends on the length() function to be created
+    let maxCapacity = Math.floor(this.capacity * this.loadFactor);
+    let bucketsLength = this.length();
+
+    // IF the added entry exceeds capacity, increase capacity before adding it and populate buckets again
+    if(bucketsLength === maxCapacity) {
+      this.increaseCapacity();
+      this.populateBuckets();
+      bucket = this.buckets[this.hash(key)];
+    }
 
     bucket.push({ key, value });
     return this.buckets;
+  }
+
+  get(key) {
+    let bucket = this.buckets[this.hash(key)];
+
+    for (const entry of bucket) {
+      if(entry.key === key) return entry.value;
+    }
+
+    return false;
+  }
+
+  has(key) {
+    let bucket = this.buckets[this.hash(key)];
+
+    for (const entry of bucket) {
+      if(entry.key === key) return true;
+    }
+
+    return false;
+  }
+
+  remove(key) {
+    let bucket = this.buckets[this.hash(key)];
+
+    bucket.forEach((entry, index) => {
+      if(entry.key === key) {
+        bucket.splice(index, 1);
+        // IF, after removal, the length of buckets is equal to prior max capacity, reduce capacity and repopulate buckets
+        let length = this.length();
+        let priorMaxCapacity = Math.floor(HashMap.primeCapacities[this.primeCapacity - 1] * this.loadFactor);
+        if(length === priorMaxCapacity) {
+          this.reduceCapacity();
+          this.populateBuckets();
+        }
+        return true;
+      }
+    });
+
+    return false;
+  }
+
+  length() {
+    return this.buckets.reduce((length, currentBucket) => length + currentBucket.length, 0);
+  }
+
+  clear() {
+    this.buckets = Array(this.capacity).fill(null).map(() => []);
+    return this.buckets;
+  }
+
+  keys() {
+    return this.buckets.flatMap(bucket => bucket.map(entry => entry.key));
+  }
+
+  values() {
+    return this.buckets.flatMap(bucket => bucket.map(entry => entry.value));
+  }
+
+  entries() {
+    return this.buckets.flatMap(bucket => bucket.map(entry => [entry.key, entry.value]));
   }
 }
